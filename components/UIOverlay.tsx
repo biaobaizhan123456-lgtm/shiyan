@@ -1,3 +1,5 @@
+﻿'use client';
+
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Plus, Loader2, ArrowLeft, Orbit, Mic, Type, Image as ImageIcon, X, Send, StopCircle, Globe, Wand2, Sparkles, Check, Search, Hash, MapPin, Smile, Network, Quote, Lock, Unlock, Heart, Play, Pause, Volume2 } from 'lucide-react';
@@ -9,7 +11,7 @@ import { editImageInspiration, mergePoeticInspirations } from '../services/gemin
 import { ParticleImage } from './ParticleImage';
 
 const POETIC_POOL = [
-  "时间在此时坍缩成尘",
+  "时间在此时坍缩成点",
   "万物皆为星尘的呼吸",
   "寂静是宇宙最深的底噪",
   "光是亿万年前的告白",
@@ -59,8 +61,8 @@ const VARIANT_TEMPLATES = [
     titleTransform: (t: string) => `残响：${t.substring(0, Math.min(t.length, 4))}...`,
     contentTransform: (c: string) => {
       const chars = c.split('');
-      const fragmented = chars.filter((_, i) => i % 3 !== 0).join(''); 
-      return `数据丢失…… ${fragmented} …… 信号源无法确认。记忆正在熵增中瓦解。`;
+      const fragmented = chars.filter((_, i) => i % 3 !== 0).join('');
+      return `数据丢失……${fragmented} ……信号源无法确认。记忆正在熵增中瓦解。`;
     }
   },
   {
@@ -77,7 +79,7 @@ const VARIANT_TEMPLATES = [
     titleTransform: (t: string) => `异化：${t}`,
     contentTransform: (c: string) => {
       const segments = c.split('').reverse().join('');
-      return `梦境逻辑：${c} ... 或者说是 ... ${segments.substring(0, 10)}？ 真实与虚幻的界限已溶解。`;
+      return `梦境逻辑：${c} ... 或者说是... ${segments.substring(0, 10)}？真实与虚幻的界限已溶解。`;
     }
   }
 ];
@@ -746,7 +748,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                 let transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
                     transcript = transcript.trim();
-                    if (!/[，。？！：；.,?!:;]/.test(transcript.slice(-1))) {
+                    if (!/[，。？！：,?!:;]/.test(transcript.slice(-1))) {
                         transcript += '，';
                     }
                     sessionTranscript += transcript;
@@ -765,7 +767,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
         recognition.onend = () => {
             setIsRecording(false);
             // FIX: Remove trailing comma when recording is officially finished
-            setTextValue(prev => prev.trim().replace(/[，,]+$/, ''));
+            setTextValue(prev => prev.trim().replace(/[锛?]+$/, ''));
             
             // Stop media recorder if speech stops automatically
             if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
@@ -804,7 +806,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
             setIsRecording(true);
         } catch (err) {
             console.error("Error accessing microphone:", err);
-            alert("无法访问麦克风");
+            alert("无法访问麦克风。");
         }
     }
   }, [isRecording, textValue]);
@@ -1010,10 +1012,10 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                 className="flex items-center gap-3 px-5 py-2.5 bg-white/5 backdrop-blur-xl border rounded-full hover:bg-white/10 transition-all shadow-xl group"
               >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                <span className="text-xs uppercase tracking-[0.3em] font-light">返回星图</span>
+                <span className="text-xs uppercase tracking-[0.3em] font-light">杩斿洖鏄熷浘</span>
               </button>
               <div className="flex flex-col">
-                <span className="text-[10px] text-white/30 uppercase tracking-[0.5em] mb-1">正在探索星域</span>
+                <span className="text-[10px] text-white/30 uppercase tracking-[0.5em] mb-1">姝ｅ湪鎺㈢储鏄熷煙</span>
                 <h1 className="text-3xl font-light tracking-[0.6em] uppercase serif-font" style={{ color: themeColor, textShadow: `0 0 25px ${themeColor}66` }}>
                   {focusedFamily}
                 </h1>
@@ -1025,7 +1027,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                 <Orbit className="text-white/40" size={20} />
                 <h1 className="text-white/80 text-2xl font-light tracking-[0.5em] uppercase">Nebula Archive</h1>
               </div>
-              <p className="text-[9px] text-white/30 tracking-[0.4em] uppercase">点击星簇以进入特定领域的灵感海洋</p>
+              <p className="text-[9px] text-white/30 tracking-[0.4em] uppercase">鐐瑰嚮鏄熺皣浠ヨ繘鍏ョ壒瀹氶鍩熺殑鐏垫劅娴锋磱</p>
             </div>
           )}
         </div>
@@ -1034,7 +1036,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
       {/* Top Right Controls */}
       {!selectedInspiration && !isMenuOpen && activeInput === 'none' && (
         <div className="fixed top-8 right-8 z-30 pointer-events-auto flex items-center gap-3">
-          <button onClick={() => setIsSearchOpen(true)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all active:scale-95 hover:scale-105" title="搜索思绪">
+          <button onClick={() => setIsSearchOpen(true)} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all active:scale-95 hover:scale-105" title="鎼滅储鎬濈华">
             <Search size={18} />
           </button>
           
@@ -1049,7 +1051,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
           )}
 
           {!focusedFamily && onToggleCommunity && (
-            <button onClick={onToggleCommunity} className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-500 hover:scale-110 active:scale-95 ${isCommunityMode ? 'bg-white/20 border-white/40 text-white shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white/80'}`} title="切换星域">
+            <button onClick={onToggleCommunity} className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-500 hover:scale-110 active:scale-95 ${isCommunityMode ? 'bg-white/20 border-white/40 text-white shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white/80'}`} title="鍒囨崲鏄熷煙">
               <Globe size={18} />
             </button>
           )}
@@ -1246,7 +1248,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                         ref={textAreaRef} 
                         autoFocus 
                         rows={1} 
-                        placeholder="在此记录你的思绪..." 
+                        placeholder="鍦ㄦ璁板綍浣犵殑鎬濈华..." 
                         className="w-full custom-textarea-scroll bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3 text-white placeholder:text-white/40 outline-none text-sm resize-none overflow-y-auto max-h-[150px] relative z-10 focus:border-white/40 transition-colors" 
                         value={textValue} 
                         onChange={(e) => setTextValue(e.target.value)} 
@@ -1272,7 +1274,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                      <textarea 
                         ref={textAreaRef} 
                         rows={3} 
-                        placeholder="聆听中..." 
+                        placeholder="鑱嗗惉涓?.." 
                         className="w-full custom-textarea-scroll bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3 text-white placeholder:text-white/40 outline-none text-sm resize-none overflow-y-auto min-h-[80px]" 
                         value={textValue} 
                         onChange={(e) => setTextValue(e.target.value)} 
@@ -1284,7 +1286,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                             className="px-8 py-2 bg-white/10 border border-white/20 rounded-full flex items-center gap-2 text-white hover:bg-white/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                             {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                            <span className="text-xs tracking-widest uppercase">生成灵感</span>
+                            <span className="text-xs tracking-widest uppercase">鐢熸垚鐏垫劅</span>
                         </button>
                     </div>
                 </div>
@@ -1318,13 +1320,13 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                   )}
                   {((selectedInspiration as any).isVariant || selectedInspiration.id.startsWith('community-')) && (
                     <>
-                        <button onClick={handleQuote} className="pointer-events-auto w-10 h-10 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all shadow-xl active:scale-95" title="引用此思绪">
+                        <button onClick={handleQuote} className="pointer-events-auto w-10 h-10 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all shadow-xl active:scale-95" title="寮曠敤姝ゆ€濈华">
                           <Quote size={14} />
                         </button>
                          <button 
                             onClick={() => setIsLiked(!isLiked)} 
                             className={`pointer-events-auto relative w-10 h-10 rounded-full backdrop-blur-2xl border flex items-center justify-center transition-all shadow-xl active:scale-95 ${isLiked ? 'bg-red-500/20 border-red-500/50 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10'}`}
-                            title="喜爱"
+                            title="鍠滅埍"
                         >
                           <Heart size={14} fill={isLiked ? "currentColor" : "none"} />
                           {isLiked && <HeartExplosion />}
@@ -1368,7 +1370,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
                            {isEditMode && (
                              <div className="absolute bottom-20 left-6 right-6 md:right-auto md:w-96 pointer-events-auto animate-in slide-in-from-bottom-5 duration-300 z-30">
                                <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 flex gap-3 shadow-2xl">
-                                  <input type="text" autoFocus placeholder="输入指令以重塑星云图像..." className="flex-1 bg-transparent border-none outline-none text-white text-sm placeholder:text-white/40 font-light" value={editPrompt} onChange={(e) => setEditPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleImageEditSubmit(); }} />
+                                  <input type="text" autoFocus placeholder="杈撳叆鎸囦护浠ラ噸濉戞槦浜戝浘鍍?.." className="flex-1 bg-transparent border-none outline-none text-white text-sm placeholder:text-white/40 font-light" value={editPrompt} onChange={(e) => setEditPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleImageEditSubmit(); }} />
                                   <div className="flex gap-2">
                                      <button disabled={!editPrompt.trim() || isEditingImage} onClick={handleImageEditSubmit} className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all">{isEditingImage ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}</button>
                                      <button onClick={() => { setIsEditMode(false); setEditPrompt(''); }} className="p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-all"><X size={16} /></button>
@@ -1421,3 +1423,10 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
     </div>
   );
 };
+
+
+
+
+
+
+

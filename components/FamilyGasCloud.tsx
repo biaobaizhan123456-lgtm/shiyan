@@ -1,3 +1,5 @@
+﻿'use client';
+
 
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
@@ -10,8 +12,8 @@ interface FamilyGasCloudProps {
   radius: number;
 }
 
-// --- NEW: 环境光晕 (Ambient Glow) ---
-// 使用 Sprite 实现，确保光晕总是柔和地面向相机，覆盖到最外层轨道
+// --- NEW: 鐜鍏夋檿 (Ambient Glow) ---
+// 浣跨敤 Sprite 瀹炵幇锛岀‘淇濆厜鏅曟€绘槸鏌斿拰鍦伴潰鍚戠浉鏈猴紝瑕嗙洊鍒版渶澶栧眰杞ㄩ亾
 const AmbientGlow = ({ color, radius }: { color: string, radius: number }) => {
   const spriteRef = useRef<THREE.Sprite>(null);
 
@@ -21,12 +23,12 @@ const AmbientGlow = ({ color, radius }: { color: string, radius: number }) => {
     canvas.height = 128;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      // 创建非常柔和的径向渐变
+      // 鍒涘缓闈炲父鏌斿拰鐨勫緞鍚戞笎鍙?
       const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');       // 中心：白色最亮
-      gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.4)');   // 内圈：迅速衰减
-      gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');   // 中圈：淡淡的颜色
-      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');             // 外圈：完全透明
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');       // 涓績锛氱櫧鑹叉渶浜?
+      gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.4)');   // 鍐呭湀锛氳繀閫熻“鍑?
+      gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');   // 涓湀锛氭贰娣＄殑棰滆壊
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');             // 澶栧湀锛氬畬鍏ㄩ€忔槑
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 128, 128);
     }
@@ -36,12 +38,12 @@ const AmbientGlow = ({ color, radius }: { color: string, radius: number }) => {
   useFrame((state) => {
     if (spriteRef.current) {
       const t = state.clock.getElapsedTime();
-      // 呼吸效果：轻微缩放
+      // 鍛煎惛鏁堟灉锛氳交寰缉鏀?
       const pulse = 1 + Math.sin(t * 0.8) * 0.05;
       
-      // 尺寸设定：
-      // 核心半径 * 3.8 确保光晕足够大，能包裹住外层轨道 (轨道最远约 radius * 1.2)
-      // 3.8 / 2 = 1.9 (半径倍数)，足以覆盖 1.2 的轨道并自然消散
+      // 灏哄璁惧畾锛?
+      // 鏍稿績鍗婂緞 * 3.8 纭繚鍏夋檿瓒冲澶э紝鑳藉寘瑁逛綇澶栧眰杞ㄩ亾 (杞ㄩ亾鏈€杩滅害 radius * 1.2)
+      // 3.8 / 2 = 1.9 (鍗婂緞鍊嶆暟)锛岃冻浠ヨ鐩?1.2 鐨勮建閬撳苟鑷劧娑堟暎
       const scale = radius * 3.8 * pulse;
       
       spriteRef.current.scale.set(scale, scale, 1);
@@ -54,7 +56,7 @@ const AmbientGlow = ({ color, radius }: { color: string, radius: number }) => {
         map={texture} 
         color={color} 
         transparent 
-        // 浅浅的发光：低不透明度 + 叠加混合
+        // 娴呮祬鐨勫彂鍏夛細浣庝笉閫忔槑搴?+ 鍙犲姞娣峰悎
         opacity={0.15} 
         blending={THREE.AdditiveBlending} 
         depthWrite={false} 
@@ -63,21 +65,21 @@ const AmbientGlow = ({ color, radius }: { color: string, radius: number }) => {
   );
 };
 
-// --- MODIFIED: 微小星点 (Micro Stars) ---
-// 修改：数量20，常亮，尺寸500-1000随机，增加连线
+// --- MODIFIED: 寰皬鏄熺偣 (Micro Stars) ---
+// 淇敼锛氭暟閲?0锛屽父浜紝灏哄500-1000闅忔満锛屽鍔犺繛绾?
 const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
   const groupRef = useRef<THREE.Group>(null);
   const count = 20; 
 
-  // 同时计算点的位置和线段的几何数据
+  // 鍚屾椂璁＄畻鐐圭殑浣嶇疆鍜岀嚎娈电殑鍑犱綍鏁版嵁
   const { positions, randoms, linePositions } = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const rands = new Float32Array(count); 
     const vec3s: THREE.Vector3[] = [];
 
-    // 1. 生成星点位置
+    // 1. 鐢熸垚鏄熺偣浣嶇疆
     for (let i = 0; i < count; i++) {
-      // 在球体内部随机分布，稍微向中心聚集
+      // 鍦ㄧ悆浣撳唴閮ㄩ殢鏈哄垎甯冿紝绋嶅井鍚戜腑蹇冭仛闆?
       const r = Math.cbrt(Math.random()) * radius * 0.85; 
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
@@ -94,15 +96,15 @@ const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
       vec3s.push(new THREE.Vector3(x, y, z));
     }
 
-    // 2. 生成连线 (连接最近的3个邻居，形成星座感)
+    // 2. 鐢熸垚杩炵嚎 (杩炴帴鏈€杩戠殑3涓偦灞咃紝褰㈡垚鏄熷骇鎰?
     const linePosList: number[] = [];
     for (let i = 0; i < count; i++) {
-      // 计算当前点到所有其他点的距离
+      // 璁＄畻褰撳墠鐐瑰埌鎵€鏈夊叾浠栫偣鐨勮窛绂?
       const distances = vec3s.map((v, idx) => ({ idx, d: v.distanceTo(vec3s[i]) }));
-      // 排序（排除自己，因为距离为0）
+      // 鎺掑簭锛堟帓闄よ嚜宸憋紝鍥犱负璺濈涓?锛?
       distances.sort((a, b) => a.d - b.d);
       
-      // 连接最近的3个点
+      // 杩炴帴鏈€杩戠殑3涓偣
       const connections = 3;
       for (let k = 1; k <= connections; k++) {
         if (distances[k]) {
@@ -137,9 +139,9 @@ const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPosition;
           
-          vAlpha = 0.95; // 保持高亮度
+          vAlpha = 0.95; // 淇濇寔楂樹寒搴?
           
-          // 大小设定：500.0 (基础) + 500.0 (随机) = 范围 [500, 1000]
+          // 澶у皬璁惧畾锛?00.0 (鍩虹) + 500.0 (闅忔満) = 鑼冨洿 [500, 1000]
           float baseSize = 500.0 + 500.0 * aRandom; 
           
           gl_PointSize = baseSize * uPixelRatio * (1.0 / -mvPosition.z);
@@ -154,11 +156,11 @@ const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
           float r = length(uv);
           if (r > 0.5) discard;
           
-          // 柔和边缘
+          // 鏌斿拰杈圭紭
           float glow = 1.0 - (r * 2.0);
           glow = pow(glow, 1.5);
           
-          // 增强白色核心
+          // 澧炲己鐧借壊鏍稿績
           float core = smoothstep(0.2, 0.0, r);
           vec3 finalColor = mix(uColor, vec3(1.0), core * 0.9);
           
@@ -176,15 +178,15 @@ const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
       material.uniforms.uTime.value = state.clock.getElapsedTime();
     }
     if (groupRef.current) {
-        // 整个星点+连线组进行缓慢自转
-        // 修改：速度增加两倍 (0.03 -> 0.06)
+        // 鏁翠釜鏄熺偣+杩炵嚎缁勮繘琛岀紦鎱㈣嚜杞?
+        // 淇敼锛氶€熷害澧炲姞涓ゅ€?(0.03 -> 0.06)
         groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.06;
     }
   });
 
   return (
     <group ref={groupRef}>
-      {/* 极细的连线 */}
+      {/* 鏋佺粏鐨勮繛绾?*/}
       <lineSegments>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" count={linePositions.length / 3} array={linePositions} itemSize={3} />
@@ -192,14 +194,14 @@ const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
         <lineBasicMaterial 
           color={color} 
           transparent 
-          opacity={0.12} // 极低的透明度，隐约可见
+          opacity={0.12} // 鏋佷綆鐨勯€忔槑搴︼紝闅愮害鍙
           linewidth={1} 
           blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </lineSegments>
 
-      {/* 星点 */}
+      {/* 鏄熺偣 */}
       <points raycast={() => null}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
@@ -211,7 +213,7 @@ const MicroStars = ({ radius, color }: { radius: number; color: string }) => {
   );
 };
 
-// --- 1. 边缘光晕球体 (Fresnel Rim) - 仅用于内层核心 ---
+// --- 1. 杈圭紭鍏夋檿鐞冧綋 (Fresnel Rim) - 浠呯敤浜庡唴灞傛牳蹇?---
 const RimSphere = ({ 
   radius, 
   color, 
@@ -286,7 +288,7 @@ const RimSphere = ({
   );
 };
 
-// --- 2. 飘散雾气粒子 (Drifting Mist) ---
+// --- 2. 椋樻暎闆炬皵绮掑瓙 (Drifting Mist) ---
 const MistParticles = ({ radius, color }: { radius: number; color: string }) => {
   const pointsRef = useRef<THREE.Points>(null);
   const count = 120; 
@@ -397,7 +399,7 @@ const MistParticles = ({ radius, color }: { radius: number; color: string }) => 
   );
 };
 
-// --- 3. 轨道环 (Orbital Ring) ---
+// --- 3. 杞ㄩ亾鐜?(Orbital Ring) ---
 const OrbitalRing = ({ 
   radius, 
   color, 
@@ -446,8 +448,8 @@ export const FamilyGasCloud: React.FC<FamilyGasCloudProps> = ({ position, color,
       const t = state.clock.getElapsedTime();
       groupRef.current.position.y = position[1] + Math.sin(t * 0.5) * 0.5;
       
-      // 添加匀速自转
-      // 修改：速度增加两倍 (0.12 -> 0.24)
+      // 娣诲姞鍖€閫熻嚜杞?
+      // 淇敼锛氶€熷害澧炲姞涓ゅ€?(0.12 -> 0.24)
       groupRef.current.rotation.y = t * 0.24;
     }
   });
@@ -455,19 +457,19 @@ export const FamilyGasCloud: React.FC<FamilyGasCloudProps> = ({ position, color,
   return (
     <group position={position} ref={groupRef}>
       
-      {/* 0. NEW: 延伸到外层的浅色光晕 (Ambient Glow) */}
+      {/* 0. NEW: 寤朵几鍒板灞傜殑娴呰壊鍏夋檿 (Ambient Glow) */}
       <AmbientGlow color={color} radius={radius} />
 
-      {/* 2. 内层：保留原有的高光能量核心 (RimSphere - Unchanged) */}
+      {/* 2. 鍐呭眰锛氫繚鐣欏師鏈夌殑楂樺厜鑳介噺鏍稿績 (RimSphere - Unchanged) */}
       <RimSphere radius={radius * 0.85} color={color} power={3.5} intensity={0.7} />
 
-      {/* 内部飘散的雾气 (Mist) */}
+      {/* 鍐呴儴椋樻暎鐨勯浘姘?(Mist) */}
       <MistParticles radius={radius * 1.0} color={color} />
 
-      {/* NEW: 内部微小星点 (Micro Stars) */}
+      {/* NEW: 鍐呴儴寰皬鏄熺偣 (Micro Stars) */}
       <MicroStars radius={radius} color={color} />
 
-      {/* 轨道环系统 (Orbital Rings) */}
+      {/* 杞ㄩ亾鐜郴缁?(Orbital Rings) */}
       <OrbitalRing radius={radius} color={color} speed={0.15} axis={[0.2, 1.0, 0.1]} thickness={0.05} opacity={0.15} />
       <OrbitalRing radius={radius * 0.95} color={color} speed={0.12} axis={[1.0, 0.2, 0.3]} thickness={0.04} opacity={0.12} />
       <OrbitalRing radius={radius * 0.75} color={color} speed={-0.2} axis={[0.5, 0.5, 1.0]} thickness={0.03} opacity={0.1} />
@@ -479,3 +481,5 @@ export const FamilyGasCloud: React.FC<FamilyGasCloudProps> = ({ position, color,
     </group>
   );
 };
+
+

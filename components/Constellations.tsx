@@ -1,16 +1,18 @@
+﻿'use client';
+
 
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { getOrbitPosition } from '../App'; // 导入轨道计算函数
+import { getOrbitPosition } from '../App'; // 瀵煎叆杞ㄩ亾璁＄畻鍑芥暟
 import '../types';
 
 interface Cluster {
   id: number;
   color: string;
-  center: [number, number, number]; // 局部相对位置
+  center: [number, number, number]; // 灞€閮ㄧ浉瀵逛綅缃?
   family: string;
-  initialAngle: number; // 从 App 传递过来的初始角度
+  initialAngle: number; // 浠?App 浼犻€掕繃鏉ョ殑鍒濆瑙掑害
 }
 
 interface ConstellationsProps {
@@ -21,7 +23,7 @@ interface ConstellationsProps {
 export const Constellations: React.FC<ConstellationsProps> = ({ clusters, galaxyRotationRef }) => {
   const lineRef = useRef<THREE.LineSegments>(null);
   
-  // 预先计算连接关系，避免每帧重复计算
+  // 棰勫厛璁＄畻杩炴帴鍏崇郴锛岄伩鍏嶆瘡甯ч噸澶嶈绠?
   const connections = useMemo(() => {
     const pairs: { startCluster: Cluster, endCluster: Cluster, color: string }[] = [];
     
@@ -52,14 +54,14 @@ export const Constellations: React.FC<ConstellationsProps> = ({ clusters, galaxy
     return pairs;
   }, [clusters]);
 
-  // 创建几何体 Attribute buffer
+  // 鍒涘缓鍑犱綍浣?Attribute buffer
   const [positions, colors] = useMemo(() => {
     const pos = new Float32Array(connections.length * 6); // 2 points * 3 coords
     const col = new Float32Array(connections.length * 6); // 2 points * 3 rgb
     
     connections.forEach((conn, i) => {
       const c = new THREE.Color(conn.color);
-      // 颜色是静态的，只设置一次
+      // 棰滆壊鏄潤鎬佺殑锛屽彧璁剧疆涓€娆?
       col[i*6+0] = c.r; col[i*6+1] = c.g; col[i*6+2] = c.b;
       col[i*6+3] = c.r; col[i*6+4] = c.g; col[i*6+5] = c.b;
     });
@@ -74,19 +76,19 @@ export const Constellations: React.FC<ConstellationsProps> = ({ clusters, galaxy
     const currentRotation = galaxyRotationRef.current;
     
     connections.forEach((conn, i) => {
-      // 1. 计算 Start Cluster 的世界坐标
+      // 1. 璁＄畻 Start Cluster 鐨勪笘鐣屽潗鏍?
       const startHubPos = getOrbitPosition(conn.startCluster.initialAngle, currentRotation);
       const startWorldX = startHubPos.x + conn.startCluster.center[0];
       const startWorldY = startHubPos.y + conn.startCluster.center[1];
       const startWorldZ = startHubPos.z + conn.startCluster.center[2];
 
-      // 2. 计算 End Cluster 的世界坐标
+      // 2. 璁＄畻 End Cluster 鐨勪笘鐣屽潗鏍?
       const endHubPos = getOrbitPosition(conn.endCluster.initialAngle, currentRotation);
       const endWorldX = endHubPos.x + conn.endCluster.center[0];
       const endWorldY = endHubPos.y + conn.endCluster.center[1];
       const endWorldZ = endHubPos.z + conn.endCluster.center[2];
 
-      // 3. 更新 Buffer
+      // 3. 鏇存柊 Buffer
       positionsAttr.setXYZ(i * 2, startWorldX, startWorldY, startWorldZ);
       positionsAttr.setXYZ(i * 2 + 1, endWorldX, endWorldY, endWorldZ);
     });
@@ -102,7 +104,7 @@ export const Constellations: React.FC<ConstellationsProps> = ({ clusters, galaxy
           count={positions.length / 3}
           array={positions}
           itemSize={3}
-          usage={THREE.DynamicDrawUsage} // 提示 Three.js 这个几何体经常变
+          usage={THREE.DynamicDrawUsage} // 鎻愮ず Three.js 杩欎釜鍑犱綍浣撶粡甯稿彉
         />
         <bufferAttribute
           attach="attributes-color"
@@ -121,3 +123,5 @@ export const Constellations: React.FC<ConstellationsProps> = ({ clusters, galaxy
     </lineSegments>
   );
 };
+
+

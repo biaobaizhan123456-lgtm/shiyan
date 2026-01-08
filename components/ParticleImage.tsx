@@ -1,3 +1,5 @@
+﻿'use client';
+
 
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -209,3 +211,5 @@ export const ParticleImage: React.FC<ParticleImageProps> = ({ imageData, themeCo
     </points>
   );
 };
+
+

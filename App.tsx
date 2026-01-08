@@ -1,4 +1,6 @@
 
+'use client';
+
 import React, { useState, Suspense, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Stars, Environment } from '@react-three/drei';
@@ -1060,7 +1062,7 @@ const App: React.FC = () => {
              );
           })}
 
-          <EffectComposer disableNormalPass multisampling={2}>
+          <EffectComposer multisampling={2} enableNormalPass={false}>
             <Bloom 
               luminanceThreshold={0.15} 
               mipmapBlur 

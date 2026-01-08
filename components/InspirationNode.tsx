@@ -1,3 +1,5 @@
+﻿'use client';
+
 
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
@@ -370,3 +372,5 @@ export const InspirationNode: React.FC<InspirationNodeProps> = ({
     </group>
   );
 };
+
+

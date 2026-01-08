@@ -1,3 +1,5 @@
+﻿'use client';
+
 
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
@@ -6,7 +8,7 @@ import * as THREE from 'three';
 import { InspirationNode } from './InspirationNode';
 import { Inspiration } from '../types';
 
-// --- 核心光晕 Sprite (2D Billboard) ---
+// --- 鏍稿績鍏夋檿 Sprite (2D Billboard) ---
 const CoreGlow = ({ color, radius, isFocused }: { color: string, radius: number, isFocused: boolean }) => {
   const spriteRef = useRef<THREE.Sprite>(null);
   
@@ -344,3 +346,5 @@ export const GalaxyCluster: React.FC<GalaxyClusterProps> = ({
     </group>
   );
 };
+
+
