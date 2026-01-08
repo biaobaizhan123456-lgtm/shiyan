@@ -1,0 +1,8 @@
+{
+  "name": "常瑞桐1.8.1",
+  "description": "A high-fidelity 3D immersive archive for celestial thoughts and inspirations, featuring dual-layer nebula clusters, bloom effects, and AI-driven poetic generation.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
